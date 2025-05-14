@@ -1,0 +1,48 @@
+services:
+  proxy:
+    image: traefik:v2.11
+    command: --providers.docker
+    ports:
+      - 80:80
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  backend:
+    build:
+      context: ./
+      target: backend-dev
+    env_file:
+      - ./.env
+    environment:
+      - DB_HOST=$MONGO_HOST
+      - DB_PORT=$MONGO_DOCKER_PORT
+      - DB_NAME=$MONGO_DB
+      - DB_USER=$MONGO_USER
+      - DB_PASS=$MONGO_PASS
+      - NODE_PORT=$NODE_PORT
+    develop:
+      watch:
+        - path: ./backend/src
+          action: sync
+          target: /usr/local/app/src
+        - path: ./backend/package.json
+          action: rebuild
+    labels:
+      traefik.http.routers.backend.rule: Host(`localhost`) && PathPrefix(`/api`)
+      traefik.http.services.backend.loadbalancer.server.port: $NODE_PORT
+
+  mongodb:
+    container_name: mongodb
+    env_file: ./.env
+    image: mongo:5.0.2
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=$MONGO_USER
+      - MONGO_INITDB_ROOT_PASSWORD=$MONGO_PASS
+      - MONGODB_INITDB_DATABASE=$MONGO_DB
+    restart: unless-stopped
+    ports:
+      - $MONGO_LOCAL_PORT:$MONGO_DOCKER_PORT
+    volumes:
+      - mongo-data:/data/db
+volumes:
+  mongo-data:

@@ -1,0 +1,26 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "HTTP API to manage reservations",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
+  },
+  "keywords": [
+    "API",
+    "database"
+  ],
+  "author": "gzzdev",
+  "license": "ISC",
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "nodemon": "^3.0.3"
+  },
+  "dependencies": {
+    "mongodb": "^6.12.0",
+    "express": "^4.18.2",
+    "wait-port": "^1.1.0"
+  }
+}
