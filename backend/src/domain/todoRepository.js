@@ -4,4 +4,11 @@ export default function todoRepository(repository) {
     const add = (todo) => repository.add(todo);
     const updateById = (id, todo) => repository.updateById(id, todo);
     const deleteById = (id) => repository.deleteById(id);
+    return {
+        findAll,
+        countAll,
+        add,
+        updateById,
+        deleteById
+    };
 }
