@@ -1,6 +1,12 @@
+import express from "express";
+import expressConfig from "./frameworks/express";
+import routes from "./frameworks/webserver/routes";
+
 const { MongoClient } = require("mongodb");
-const express = require('express');
+
 const app = express();
+expressConfig(app);
+
 
 const { DB_USER, DB_PASS, DB_HOST, DB_PORT, DB_NAME, NODE_PORT } = process.env;
 
@@ -10,8 +16,6 @@ const mongoURI =
 
 const client = new MongoClient(mongoURI);
 let db = null;
-
-app.use(express.json());
 client.connect()
     .catch(console.error)
     .then(() => {    
@@ -19,17 +23,7 @@ client.connect()
         app.listen(NODE_PORT, () => console.log(`Listening on port ${NODE_PORT}`));
     });
 
-
-// const getCollections = async (req, res) => {
-//     console.log("getCollections")
-//     let colls = await client.db(DB_NAME).collection('devices').find().toArray();
-//     res.send({'colls': colls});
-// }
-
-
-// app.get('/api/collections', getCollections)
-
-
+routes(app, express);
 const gracefulShutdown = () => {
     client.close().catch(() => {}).then(() => process.exit());
 };
