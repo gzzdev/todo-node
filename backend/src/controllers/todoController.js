@@ -1,20 +1,24 @@
+const findAll = require('../domain/usecase/findAll');
 
-export default function todoController(database) {
-    const todoCollection = database.collection("todos");
+export default function todoController(
+    todoRepository,
+    todoDbRepositoryImpl,
+) {
+    const dbRepo = todoRepository(todoDbRepositoryImpl);
 
-
-    const fetchTodos = (req, res, next) => {
-        todoCollection.find({}).toArray()
+    const fetchAllTodos = (req, res, next) => {
+        response = {};
+        findAll(req.query, dbRepo)
             .then((todos) => {
-                res.status(200).json(todos);
+                response.todos = todos;
+                return res.json(response);
             })
             .catch((error) => {
-                console.error("Error fetching todos:", error);
-                res.status(500).json({ error: "Internal server error" });
-            });
-    }
-
+                next(error);
+            })
+    };
+    
     return {
-        fetchTodos,
-    }
+      fetchAllTodos,
+    };
 }
