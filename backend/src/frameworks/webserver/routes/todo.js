@@ -8,6 +8,7 @@ export default function todoRouter(express) {
     const controller = todoController(todoRepository, todoRepoMongo);
     
     router.route("/").get(controller.fetchAllTodos);
+    router.route("/").post(controller.createTodo);
     return router;
 
 }
